@@ -27,14 +27,7 @@ class MapTileApplicationService implements IApplicationService
 	{
 		$layers = array();
 		$layerFactory = new LayerFactory();
-		if($zoom > 5) {
-		//	$layers[] = $layerFactory->getById(4);
-		} else {
-		//	$layers[] = $layerFactory->getById(2);
-		}
-		
 		$layers[] = $layerFactory->getById(1);
-
 		$map = new MapTile($width, $height);
 		$map->get($layers, $x, $y, $zoom);
 	}
