@@ -138,8 +138,8 @@ class MapTile implements IDomainService
 				$cArray = array();
 				$i = 0;
 				foreach($part as $coord) {
-					$cArray[$i] = $coord->getX() * $this->scale - $this->offsetX;
-					$cArray[$i+1] = -$coord->getY() * $this->scale - $this->offsetY;
+					$cArray[$i] = ceil($coord->getX() * $this->scale - $this->offsetX);
+					$cArray[$i+1] = ceil(-$coord->getY() * $this->scale - $this->offsetY);
 					$i += 2;
 				}
 
@@ -170,8 +170,8 @@ class MapTile implements IDomainService
 				$prevY = 0;
 
 				foreach($part as $coord) {
-					$nextX = $coord->getX() * $this->scale - $this->offsetX;
-					$nextY = -$coord->getY() * $this->scale - $this->offsetY;
+					$nextX = ceil($coord->getX() * $this->scale - $this->offsetX);
+					$nextY = ceil(-$coord->getY() * $this->scale - $this->offsetY);
 
 					if($prevX == $nextX && $prevY == $nextY) {}
 					elseif(!empty($prevX)) {
