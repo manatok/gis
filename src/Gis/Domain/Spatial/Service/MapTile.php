@@ -200,7 +200,7 @@ class MapTile implements IDomainService
 		foreach($points as $point) {
 			$set = $setFactory->getById($point->getSetId());
 			$spatialObject = $point->getSpatialObject();
-			$coord = $spatialObject->current()[0];
+			$coord = current($spatialObject->current());
 
 			$x = $coord->getX() * $this->scale - $this->offsetX;
 			$y = -$coord->getY() * $this->scale - $this->offsetY;
