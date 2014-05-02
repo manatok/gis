@@ -56,7 +56,11 @@ class DBaseFile implements IDomainService
      */
     public function getRecordCount()
     {
-        return $this->getHeaders()['RecordCount'];
+        if(!isset($this->headers)) {
+            $this->readHeaders();
+        }
+
+        return $this->headers['RecordCount'];
     }
 
     /**
@@ -64,7 +68,11 @@ class DBaseFile implements IDomainService
      */
     public function getRecordLength()
     {
-        return $this->getHeaders()['RecordLength'];
+        if(!isset($this->headers)) {
+            $this->readHeaders();
+        }
+
+        return $this->headers['RecordLength'];
     }
 
     /**
