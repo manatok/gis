@@ -35,7 +35,11 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 					Y(min_lat_long) as minY,
 					X(max_lat_long) as maxX,
 					Y(max_lat_long) as maxY,
-					limit_scale
+					color,
+					enabled,
+					position,
+					zoom_min,
+					zoom_max
 				FROM layers 
 				WHERE id = :id";
 
@@ -61,10 +65,11 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 		$layerStruct->minY = $row->minY;
 		$layerStruct->maxX = $row->maxX;
 		$layerStruct->maxY = $row->maxY;
-		$layerStruct->minZone = $row->min_zone;
-		$layerStruct->maxZone = $row->max_zone;
-		$layerStruct->limitScale = $row->limit_scale;
-		$layerStruct->colour = $row->colour;
+		$layerStruct->color = $row->color;
+		$layerStruct->enabled = $row->enabled;
+		$layerStruct->position = $row->position;
+		$layerStruct->zoomMin = $row->zoom_min;
+		$layerStruct->zoomMax = $row->zoom_max;
 		
 		return $layerStruct;
 	}
@@ -80,13 +85,21 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 					`name`,
 					`min_lat_long`,
 					`max_lat_long`,
-					`limit_scale`)
+					`color`,
+					`enabled`,
+					`position`,
+					`zoom_min`,
+					`zoom_max`)
 				VALUES
 					(
 					:name,
 					GeomFromText('POINT(:minx :miny)'),
 					GeomFromText('POINT(:maxx :maxy)'),
-					:limit_scale)";
+					:color,
+					:enabled,
+					:position,
+					:zoom_min,
+					:zoom_max)";
 
 		$qb = new QueryBuilder($query);
 
@@ -95,7 +108,11 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 		$qb->bindFloat('miny', $struct->minY);
 		$qb->bindFloat('maxx', $struct->maxX);
 		$qb->bindFloat('maxy', $struct->maxY);
-		$qb->bindInt('limit_scale', $struct->limitScale);
+		$qb->bindString('color', $struct->color);
+		$qb->bindInt('enabled', $struct->enabled);
+		$qb->bindInt('position', $struct->position);
+		$qb->bindInt('zoom_min', $struct->zoomMin);
+		$qb->bindInt('zoom_max', $struct->zoomMax);
 
 		$this->getConnectionFactory()
 				->getWriteConnection()
@@ -116,7 +133,11 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 					name=:name,
 					min_lat_long=GeomFromText('POINT(:minx :miny)'),
 					max_lat_long=GeomFromText('POINT(:maxx :maxy)'),
-					limit_scale=:limit_scale,
+					color=:color,
+					enabled=:enabled,
+					position=:position,
+					zoom_min=:zoom_min,
+					zoom_max=:zoom_max
 				WHERE
 					id=:id";
 
@@ -127,7 +148,11 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 		$qb->bindFloat('miny', $struct->minY);
 		$qb->bindFloat('maxx', $struct->maxX);
 		$qb->bindFloat('maxy', $struct->maxY);
-		$qb->bindInt('limit_scale', $struct->limitScale);
+		$qb->bindString('color', $struct->color);
+		$qb->bindInt('enabled', $struct->enabled);
+		$qb->bindInt('position', $struct->position);
+		$qb->bindInt('zoom_min', $struct->zoomMin);
+		$qb->bindInt('zoom_max', $struct->zoomMax);
 		$qb->bindInt('id', $struct->id);
 
 
@@ -153,6 +178,33 @@ class LayerDataProvider extends BaseDataProvider implements ILayerDataProvider
 				->query($qb->prepare());
 
 		return $res[0]->type;
+	}
+
+	/**
+	 * Fetch all of the active layers to be drawn ordered by
+	 * position, id
+	 *
+	 * @param int $zoom If passed in this will filter the result based on zoom_min & zoom_max
+	 * @return LayerStruct
+	 */
+	public function getActive($zoom = null)
+	{
+		$query = "SELECT * FROM layers WHERE enabled=1 ";
+
+		if(!is_null($zoom)) {
+			$query .= " AND zoom_min<=:zoom AND zoom_max >=:zoom ";
+		}
+
+		$query .= "order by position, id";
+
+		$qb = new QueryBuilder($query);
+		$qb->bindInt('zoom', $zoom);
+
+		$res = $this->getConnectionFactory()
+				->getReadConnection()
+				->query($qb->prepare());
+
+		return $this->createDataStructs($res);
 	}
 
 

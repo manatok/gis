@@ -43,8 +43,9 @@ class ConfigDataManager
 			
 			self::$data = $config;
 			
-			foreach (glob("{self::$folderPath}/*.php") as $filename) {
-				if(end(explode('/',$filename)) != "default.php") {
+			foreach (glob(self::$folderPath."/*.php") as $filename) {
+				$name = explode('/',$filename);
+				if(end($name) != "default.php") {
 					include_once $filename;
 				}
 			}

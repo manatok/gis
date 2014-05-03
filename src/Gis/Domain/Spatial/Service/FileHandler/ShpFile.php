@@ -167,7 +167,7 @@ class ShpFile
 			case SpatialObject::TYPE_POLYGON:
 				return $this->createPolygon();
 				break;
-			default: //throw new UnsupportedTypeException($recordShapeType.' is not currently supported');
+			default: return;
 		}
 	}
 

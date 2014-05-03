@@ -1,2 +1,4 @@
 src/example/uploads/*
 *.DS_Store
+src/Gis/Config/*
+!src/Gis/Config/default.php

@@ -4,6 +4,7 @@ namespace Gis\Application;
 use Gis\Core\Application\IApplicationService;
 use Gis\Domain\Spatial\Service\MapTile;
 use Gis\Domain\Spatial\Model\Layer\LayerFactory;
+use Gis\Core\Config\ConfigReader;
 
 /**
  * Used for fetching configured tiles. This will set up any configuration
@@ -25,9 +26,11 @@ class MapTileApplicationService implements IApplicationService
 	 */
 	public function getDemoTile($width, $height, $x, $y, $zoom)
 	{
-		$layers = array();
+		$configReader = new ConfigReader();
+		$includedLayerIds  = $configReader->get('layers.included');
+		
 		$layerFactory = new LayerFactory();
-		$layers[] = $layerFactory->getById(2);
+		$layers = $layerFactory->getActive($zoom);
 		$map = new MapTile($width, $height);
 		$map->get($layers, $x, $y, $zoom);
 	}

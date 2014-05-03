@@ -33,7 +33,6 @@ class Layer extends BaseDomainObject implements IPersistableDomainObject
 		return new LayerStruct();
 	}
 
-
 	/**
 	 * Used to insert/update the current
 	 * DomainObject instance.
@@ -174,37 +173,86 @@ class Layer extends BaseDomainObject implements IPersistableDomainObject
 	{
 		return $this->getDataStruct()->maxZone;
 	}
+	
 
 	/**
-	 * @param int $limitScale
+	 * @param string $color
 	 */
-	public function setLimitScale($limitScale)
+	public function setColor($color)
 	{
-		$this->getDataStruct()->limitScale = $limitScale;
+		$this->getDataStruct()->color = $color;
 	}
 
 	/**
-	 * @return int $limitScale
+	 * @return string $color
 	 */
-	public function getLimitScale()
+	public function getColor()
 	{
-		return $this->getDataStruct()->limitScale;
+		return $this->getDataStruct()->color;
 	}
 
 	/**
-	 * @param string $colour
+	 * @param bool $enabled
 	 */
-	public function setColour($colour)
+	public function setEnabled($enabled)
 	{
-		$this->getDataStruct()->colour = $colour;
+		$this->getDataStruct()->enabled = $enabled;
 	}
 
 	/**
-	 * @return string $colour
+	 * @return bool $enabled
 	 */
-	public function getColour()
+	public function getEnabled()
 	{
-		return $this->getDataStruct()->colour;
+		return $this->getDataStruct()->enabled;
+	}
+
+	/**
+	 * @param int $position
+	 */
+	public function setPosition($position)
+	{
+		$this->getDataStruct()->position = $position;
+	}
+
+	/**
+	 * @return int $position
+	 */
+	public function getPosition()
+	{
+		return $this->getDataStruct()->position;
+	}
+
+	/**
+	 * @param int $zoomMin
+	 */
+	public function setZoomMin($zoomMin)
+	{
+		$this->getDataStruct()->zoomMin = $zoomMin;
+	}
+
+	/**
+	 * @return int $zoomMin
+	 */
+	public function getZoomMin()
+	{
+		return $this->getDataStruct()->zoomMin;
+	}
+
+	/**
+	 * @param int $zoomMax
+	 */
+	public function setZoomMax($zoomMax)
+	{
+		$this->getDataStruct()->zoomMax = $zoomMax;
+	}
+
+	/**
+	 * @return int $zoomMax
+	 */
+	public function getZoomMax()
+	{
+		return $this->getDataStruct()->zoomMax;
 	}
 
 	/**

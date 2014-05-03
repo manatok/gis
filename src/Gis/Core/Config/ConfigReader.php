@@ -21,12 +21,14 @@ namespace Gis\Core\Config;
  */
 class ConfigReader implements IConfigReader
 {
-	private $configFolderPath = '/src/Config';
+	private $configFolderPath;
 
 	public function __construct($configFolderPath = null)
 	{
 		if(!is_null($configFolderPath)) {
 			$this->configFolderPath = $configFolderPath;	
+		} else {
+			$this->configFolderPath = dirname(dirname(dirname(__FILE__))).'/Config';
 		}
 	}
 

@@ -34,4 +34,14 @@ class LayerFactory extends BaseRetrievableDomainObjectFactory implements ILayerF
 		$layer->setDataStruct($struct);
 		return $layer;
 	}
+
+	/**
+	 * Fetch all of the enabled layers ordered by position,id
+	 * @return Layer[]
+	 */
+	public function getActive($zoom)
+	{
+		$structs = $this->getDomainDataProvider()->getActive($zoom);
+		return $this->createDataObjects($structs);
+	}
 }

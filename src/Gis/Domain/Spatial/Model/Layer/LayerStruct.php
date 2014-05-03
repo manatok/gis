@@ -14,6 +14,9 @@ class LayerStruct implements IDataStruct
 	public $minY;
 	public $maxX;
 	public $maxY;
-	public $limitScale;
-	
+	public $color;
+	public $enabled;
+	public $position;
+	public $zoomMin;
+	public $zoomMax;
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Gis\Domain\Spatial\Service;
 
+use Gis\Core\Config\ConfigReader;
 use Gis\Core\Domain\IDomainService;
 use Gis\Domain\Spatial\Model\Layer\LayerFactory;
 use Gis\Domain\Spatial\Model\Layer\Layer;
@@ -35,6 +36,7 @@ class MapTile implements IDomainService
 	private $scale;		//2^zoom
 	private $boundsMax;	//Max x,y coords of the tile
 	private $boundsMin; //Min x,y coords of the tile
+	private $configReader;
 
 	/*
 		There seems to be a bug in the imagefilledpolygon method of the
@@ -61,6 +63,20 @@ class MapTile implements IDomainService
 		if($this->doGDHack) {
 			$this->height += 1;
 		}
+	}
+
+	/**
+	 * Used to read config from Gis\Config\*
+	 * 
+	 * @return ConfigReader
+	 */
+	private function getConfigReader()
+	{
+		if(!isset($this->configReader)) {
+			$this->configReader = new ConfigReader();
+		}
+		
+		return $this->configReader;
 	}
 
 	/**
@@ -98,20 +114,20 @@ class MapTile implements IDomainService
 		$this->createImage();
 
 		//draw each one of the given layers
-        foreach($layers as $layer) {
-        	//@TODO here we make an assumption that this layer only contains data of 1 type
-        	switch($layer->getType()) {
-        		case SpatialObject::TYPE_POLYGON:
-        			$this->drawPolygons($layer->getId());
-        			break;
-        		case SpatialObject::TYPE_LINESTRING:
-        			$this->drawLinestrings($layer->getId());
-        			break;
-        		case SpatialObject::TYPE_POINT:
-        			$this->drawPoints($layer->getId());
-        			break;
-        	}
-        }
+		foreach($layers as $layer) {
+		//@TODO here we make an assumption that this layer only contains data of 1 type
+			switch($layer->getType()) {
+				case SpatialObject::TYPE_POLYGON:
+					$this->drawPolygons($layer->getId());
+					break;
+				case SpatialObject::TYPE_LINESTRING:
+					$this->drawLinestrings($layer->getId());
+					break;
+				case SpatialObject::TYPE_POINT:
+					$this->drawPoints($layer->getId());
+					break;
+			}
+		}
 
         //output the image
         $this->render();
@@ -235,10 +251,22 @@ class MapTile implements IDomainService
 	private function createImage()
 	{
 		$this->image = imagecreate($this->width, $this->height);
-        $bgcolor = imagecolorallocate($this->image, 187, 205, 223);
-        $this->tilecolor = imagecolorallocate($this->image,255,255,255);
-		$this->linecolor = imagecolorallocate($this->image,180,180,180);
-		$this->linestringcolor = imagecolorallocate($this->image,180,0,180);
+
+		$bgcolor = $this->getConfigReader()->get('color.background');
+		$bordercolor = $this->getConfigReader()->get('color.border');
+
+		if(!is_array($bgcolor)) {
+			$bgcolor = array(76, 95, 115);
+		}
+
+		if(!is_array($bordercolor)) {
+			$bordercolor = array(150,150,150);
+		}
+
+        $bg = imagecolorallocate($this->image, $bgcolor[0], $bgcolor[1], $bgcolor[2]);
+        $this->tilecolor = imagecolorallocate($this->image,200,200,172);
+		$this->linecolor = imagecolorallocate($this->image,$bordercolor[0],$bordercolor[1],$bordercolor[2]);
+		$this->linestringcolor = imagecolorallocate($this->image,133,192,226);
 		$this->pointcolor = imagecolorallocate ($this->image,190,38,0);
 		$this->black = imagecolorallocate($this->image, 0, 0, 0);
 	}

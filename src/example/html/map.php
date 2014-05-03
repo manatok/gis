@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Basic map types</title>
+    <title>GIS MapTile example</title>
     <style>
       html, body, #map-canvas {
         height: 100%;
