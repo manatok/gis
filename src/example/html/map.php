@@ -12,6 +12,12 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script>
 /**
+ * Edit this to your domain
+ */
+var basePath = 'http://gis.dev/src/example/index.php';
+
+
+/**
  * @constructor
  * @implements {google.maps.MapType}
  */
@@ -21,7 +27,7 @@ CoordMapType.prototype.maxZoom = 19;
 
 CoordMapType.prototype.getTile = function(coord, zoom, ownerDocument) {
   var oImg=ownerDocument.createElement("img");
-  oImg.setAttribute('src', 'http://gis.dev/src/example/index.php?action=draw&w='+this.tileSize.width+'&h='+this.tileSize.height+'&x='+coord.x+'&y='+coord.y+'&z='+zoom);
+  oImg.setAttribute('src', basePath+'?action=draw&w='+this.tileSize.width+'&h='+this.tileSize.height+'&x='+coord.x+'&y='+coord.y+'&z='+zoom);
   oImg.setAttribute('height', this.tileSize.height+'px');
   oImg.setAttribute('width', this.tileSize.width+'px');
   return oImg;

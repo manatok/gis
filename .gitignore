@@ -1,4 +1,5 @@
 src/example/uploads/*
+!src/example/uploads/world_simple.*
 *.DS_Store
 src/Gis/Config/*
 !src/Gis/Config/default.php
