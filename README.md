@@ -30,7 +30,7 @@ Here is a demo of the map tile engine in action. I have only drawn the world bou
 Since there is no interface for managing layers properly there are some things you need to know how to do manually until such time as an interface is developed. The fields on the layers table are important for how and when a layer is shown on the map. Here are some of the fields and what they do:
 
 | Field | Purpose |
-____________________
+--- | ---
 color		| the color this layer will display as, saved as a hex value
 enabled 	| 1 = enabled , 0 = disabled
 position	| the order in which the layers are drawn. 0 = first ... n = last
