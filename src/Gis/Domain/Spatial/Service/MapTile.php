@@ -115,16 +115,18 @@ class MapTile implements IDomainService
 
 		//draw each one of the given layers
 		foreach($layers as $layer) {
+			$colors = $this->hexToRGB($layer->getColor());
+
 		//@TODO here we make an assumption that this layer only contains data of 1 type
 			switch($layer->getType()) {
 				case SpatialObject::TYPE_POLYGON:
-					$this->drawPolygons($layer->getId());
+					$this->drawPolygons($layer->getId(), $colors);
 					break;
 				case SpatialObject::TYPE_LINESTRING:
-					$this->drawLinestrings($layer->getId());
+					$this->drawLinestrings($layer->getId(), $colors);
 					break;
 				case SpatialObject::TYPE_POINT:
-					$this->drawPoints($layer->getId());
+					$this->drawPoints($layer->getId(), $colors);
 					break;
 			}
 		}
@@ -158,8 +160,10 @@ class MapTile implements IDomainService
 	 * @param  int $layerId
 	 * @return void  All changes done to the $this->image handle
 	 */
-	private function drawPolygons($layerId)
-	{
+	private function drawPolygons($layerId, $colors)
+	{	
+		$color = imagecolorallocate($this->image,$colors[0],$colors[1],$colors[2]);
+
 		$polygonFactory = new PolygonFactory();
 		$polygons = $polygonFactory->getByLayerInBounds($layerId, $this->boundsMin, $this->boundsMax);
 	
@@ -177,7 +181,7 @@ class MapTile implements IDomainService
 				}
 
 				if(count($cArray) >= 6){
-					imagefilledpolygon($this->image, $cArray, ($i/2), $this->tilecolor);
+					imagefilledpolygon($this->image, $cArray, ($i/2), $color);
 					imagepolygon($this->image, $cArray, ($i/2), $this->linecolor);
 				}
 			}
@@ -191,8 +195,10 @@ class MapTile implements IDomainService
 	 * @param  int $layerId
 	 * @return void All changes done to the $this->image handle
 	 */
-	private function drawLinestrings($layerId)
+	private function drawLinestrings($layerId, $colors)
 	{
+		$color = imagecolorallocate($this->image,$colors[0],$colors[1],$colors[2]);
+
 		$linestringFactory = new LinestringFactory();
 		$linestrings = $linestringFactory->getByLayerInBounds($layerId, $this->boundsMin, $this->boundsMax);
 		
@@ -210,7 +216,7 @@ class MapTile implements IDomainService
 					if($prevX == $nextX && $prevY == $nextY) {}
 					elseif(!empty($prevX)) {
 						imagesetthickness($this->image, $thick = 2);
-		    			imageline($this->image, $prevX, $prevY, $nextX, $nextY, $this->linestringcolor);
+		    			imageline($this->image, $prevX, $prevY, $nextX, $nextY, $color);
 		    		}
 		    		
 		    		$prevX = $nextX;
@@ -225,8 +231,10 @@ class MapTile implements IDomainService
 	 * @param  int $layerId
 	 * @return void All changes done to the $this->image handle
 	 */
-	private function drawPoints($layerId)
+	private function drawPoints($layerId, $colors)
 	{
+		$color = imagecolorallocate($this->image,$colors[0],$colors[1],$colors[2]);
+
 		$setFactory = new SetFactory();
 		$pointFactory = new PointFactory();
 		$points = $pointFactory->getByLayerInBounds($layerId, $this->boundsMin, $this->boundsMax);
@@ -239,8 +247,8 @@ class MapTile implements IDomainService
 			$x = $coord->getX() * $this->scale - $this->offsetX;
 			$y = -$coord->getY() * $this->scale - $this->offsetY;
 			
-			imagefilledellipse($this->image, $x, $y, 4, 4, $this->pointcolor);
-			imagestring($this->image, $font=1,$x+1,$y,$set->getName(), $this->black);
+			imagefilledellipse($this->image, $x, $y, 4, 4, $color);
+			imagestring($this->image, $font=1,$x+1,$y,$set->getName(), $color);
 		}
 	}
 
@@ -266,9 +274,6 @@ class MapTile implements IDomainService
         $bg = imagecolorallocate($this->image, $bgcolor[0], $bgcolor[1], $bgcolor[2]);
         $this->tilecolor = imagecolorallocate($this->image,200,200,172);
 		$this->linecolor = imagecolorallocate($this->image,$bordercolor[0],$bordercolor[1],$bordercolor[2]);
-		$this->linestringcolor = imagecolorallocate($this->image,133,192,226);
-		$this->pointcolor = imagecolorallocate ($this->image,190,38,0);
-		$this->black = imagecolorallocate($this->image, 0, 0, 0);
 	}
 
 	/**
@@ -288,5 +293,17 @@ class MapTile implements IDomainService
 		} else {
 			imagepng($this->image);
 		}
+	}
+
+	/**
+	 * Convert a hex color e.g #FF2321 to RGB
+	 * 
+	 * @param  string $hex
+	 * @return array(r,g,b)
+	 */
+	private function hexToRGB($hex)
+	{
+		list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
+		return array($r, $g, $b);
 	}
 }
