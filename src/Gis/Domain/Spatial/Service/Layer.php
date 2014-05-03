@@ -45,6 +45,11 @@ class Layer implements IDomainService
 		$layer->setMinY($shpFile->getMinY());
 		$layer->setMaxX($shpFile->getMaxX());
 		$layer->setMaxY($shpFile->getMaxY());
+		$layer->setColor('#FFFFFF');
+		$layer->setEnabled(1);
+		$layer->setZoomMin(0);
+		$layer->setZoomMax(100);
+		$layer->setPosition(1);
 		$layer->save();
 		$record = 1;
 

@@ -27,13 +27,16 @@ CREATE TABLE `attributes` (
 --
 -- Table structure for table `layers`
 --
-
 CREATE TABLE `layers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `min_lat_long` point DEFAULT NULL,
   `max_lat_long` point DEFAULT NULL,
-  `limit_scale` int(11) DEFAULT NULL,
+  `color` varchar(45) DEFAULT '#FF0000',
+  `enabled` tinyint(4) DEFAULT '1',
+  `position` int(11) DEFAULT '1',
+  `zoom_min` smallint(6) DEFAULT '0',
+  `zoom_max` smallint(6) DEFAULT '100',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
