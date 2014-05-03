@@ -36,6 +36,17 @@ class MapTile implements IDomainService
 	private $boundsMax;	//Max x,y coords of the tile
 	private $boundsMin; //Min x,y coords of the tile
 
+	/*
+		There seems to be a bug in the imagefilledpolygon method of the
+		GD library where it doesnt fill a polygon completely. Often there
+		is a 1px row at the very bottom of the image that is not correct.
+		This results in lines appearing on the map, if you notice this then
+		you should turn this flag on. 
+
+		With this flag set the image is created 1px longer and then the 1px
+		cropped off at the end. Such a hack but it seems to work.
+	 */
+	private $doGDHack = 1;
 	/**
 	 * Create us a new map instance of the specified width x height
 	 * @param int $width   width of the tile in px
@@ -45,6 +56,11 @@ class MapTile implements IDomainService
 	{
 		$this->width = $width;
 		$this->height = $height;
+
+		//refer to notes above
+		if($this->doGDHack) {
+			$this->height += 1;
+		}
 	}
 
 	/**
@@ -132,14 +148,15 @@ class MapTile implements IDomainService
 		$polygons = $polygonFactory->getByLayerInBounds($layerId, $this->boundsMin, $this->boundsMax);
 	
 		foreach($polygons as $polygon) {
+			
 			$spatialObject = $polygon->getSpatialObject();
 
 			foreach ($spatialObject as $partId => $part) {
 				$cArray = array();
 				$i = 0;
 				foreach($part as $coord) {
-					$cArray[$i] = ceil($coord->getX() * $this->scale - $this->offsetX);
-					$cArray[$i+1] = ceil(-$coord->getY() * $this->scale - $this->offsetY);
+					$cArray[$i] = $coord->getX() * $this->scale - $this->offsetX;
+					$cArray[$i+1] = -$coord->getY() * $this->scale - $this->offsetY;
 					$i += 2;
 				}
 
@@ -149,6 +166,7 @@ class MapTile implements IDomainService
 				}
 			}
 		}
+		
 	}
 
 	/**
@@ -170,8 +188,8 @@ class MapTile implements IDomainService
 				$prevY = 0;
 
 				foreach($part as $coord) {
-					$nextX = ceil($coord->getX() * $this->scale - $this->offsetX);
-					$nextY = ceil(-$coord->getY() * $this->scale - $this->offsetY);
+					$nextX = $coord->getX() * $this->scale - $this->offsetX;
+					$nextY = -$coord->getY() * $this->scale - $this->offsetY;
 
 					if($prevX == $nextX && $prevY == $nextY) {}
 					elseif(!empty($prevX)) {
@@ -232,6 +250,15 @@ class MapTile implements IDomainService
 	private function render()
 	{
 		header ("Content-type: image/png");
-		imagepng($this->image);
+
+		//see notes above. Going to crop off the last px from the bottom
+		//because of a bug in imagefilledpolygon
+		if($this->doGDHack) {
+			$img = imagecreate($this->width, $this->height-1);
+			imagecopyresampled($img, $this->image, 0,0,0,0, $this->width, $this->height-1, $this->width, $this->height-1);
+			imagepng($img);
+		} else {
+			imagepng($this->image);
+		}
 	}
 }
