@@ -6,7 +6,7 @@ This project is split into 2 sections, the tile engine and the example which use
 
 ## Demo ##
 Here is a demo of the map tile engine in action. I have only drawn the world boundaries.
-(Map Example)[http://manatok.com/gis/src/example/index.php?action=map]
+[Map Example](http://manatok.com/gis/src/example/index.php?action=map)
 
 ## Supported Spatial Types ##
 1. Polygon
@@ -29,7 +29,7 @@ Here is a demo of the map tile engine in action. I have only drawn the world bou
 ### Configuring ###
 Since there is no interface for managing layers properly there are some things you need to know how to do manually until such time as an interface is developed. The fields on the layers table are important for how and when a layer is shown on the map. Here are some of the fields and what they do:
 
-Field 		| 	Purpose
+| Field | Purpose |
 -------------------------------------------------------------------------
 color		| the color this layer will display as, saved as a hex value
 enabled 	| 1 = enabled , 0 = disabled
