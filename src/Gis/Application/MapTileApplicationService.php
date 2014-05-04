@@ -26,9 +26,6 @@ class MapTileApplicationService implements IApplicationService
 	 */
 	public function getDemoTile($width, $height, $x, $y, $zoom)
 	{
-		$configReader = new ConfigReader();
-		$includedLayerIds  = $configReader->get('layers.included');
-		
 		$layerFactory = new LayerFactory();
 		$layers = $layerFactory->getActive($zoom);
 		$map = new MapTile($width, $height);
